@@ -17,6 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "deployUrl": "https://lucasnova.github.io/json2ue4/",
             "outputPath": "docs",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -40,6 +41,7 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
+              
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
