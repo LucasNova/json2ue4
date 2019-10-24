@@ -17,6 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "baseHref": "https://lucasnova.github.io/json2ue4/",
             "deployUrl": "https://lucasnova.github.io/json2ue4/",
             "outputPath": "docs",
             "index": "src/index.html",
