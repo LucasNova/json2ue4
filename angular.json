@@ -17,8 +17,6 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "baseHref": "https://lucasnova.github.io/json2ue4/",
-            "deployUrl": "https://lucasnova.github.io/json2ue4/",
             "outputPath": "docs",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -30,19 +28,21 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/pink-bluegrey.css",
               "src/styles.scss"
             ],
             "scripts": []
           },
           "configurations": {
             "production": {
+              "baseHref": "/json2ue4/",
+              "deployUrl": "https://lucasnova.github.io/json2ue4/",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -96,6 +96,7 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/pink-bluegrey.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -127,6 +128,7 @@
           }
         }
       }
-    }},
+    }
+  },
   "defaultProject": "json2ue4"
 }

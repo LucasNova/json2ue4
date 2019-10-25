@@ -1,4 +1,62 @@
 <h1>JSON to UE4 <span class="purple">Structures/Classes</span> with <span class="orange">serialization</span></h1>
-<ace-editor
-        #jsoneditor style="height:150px;">
-</ace-editor>
+
+<div class="table editors">
+        <div class="row-editor smaller">
+                <div>
+                        <div class="table">
+                                <div class="row" style="height: 140px">
+                                        <mat-form-field class="example-full-width">
+                                                <input matInput placeholder="Struct Name"
+                                                        [value]="className"
+                                                        (change)="onClassNameChanged($event.target.value)">
+                                        </mat-form-field>
+                                        <p *ngIf="!className" class="hint">Note: generator will use name
+                                                "MyStruct" if you miss this field</p>
+                                </div>
+                                <div class="row" style="height: 140px">
+                                        <mat-slide-toggle class="example-margin" color="primary"
+                                                [checked]="optionsPrefixes" (change)="onPrefixesToggle($event.checked)"
+                                                style="margin-top: 20px">
+                                                WithPrefixes
+                                        </mat-slide-toggle>
+                                        <p *ngIf="!optionsPrefixes" class="hint">Note: If your response have duplicated
+                                                key names, output generate duplicated structures. You need fix it by
+                                                yourself</p>
+                                </div>
+                                <div class="row" style="height: 140px">
+                                        <mat-slide-toggle class="example-margin" color="primary"
+                                                [checked]="optionsSerializable"
+                                                (change)="onSerializableToggle($event.checked)"
+                                                style="margin-top: 20px">
+                                                With serialization
+                                        </mat-slide-toggle>
+                                        <p *ngIf="optionsSerializable" class="hint">Note: Currently not working, wait new version</p>
+                                </div>
+                                <div class="row" style="height: 140px">
+                                        <mat-slide-toggle class="example-margin" color="primary"
+                                                [checked]="optionsBlueprintable"
+                                                (change)="onBlueprintableToggle($event.checked)"
+                                                style="margin-top: 20px">
+                                                Blueprintable
+                                        </mat-slide-toggle>
+                                </div>
+                                <div class="row" style="height: 140px">
+                                        <mat-slide-toggle class="example-margin" color="primary"
+                                                [checked]="optionsPluralizable"
+                                                (change)="onPluralizableToggle($event.checked)"
+                                                style="margin-top: 20px">
+                                                Singularization
+                                        </mat-slide-toggle>
+                                        <p *ngIf="optionsPluralizable" class="hint">Note: Will convert structure name to singular form, if that was created from array</p>
+                                </div>
+                        </div>
+                </div>
+                <p>Put your JSON response here:</p>
+                <ace-editor #jsoneditor style="min-height:480px;"></ace-editor>
+        </div>
+        <div class="row-editor bigger">
+                <p>Output:</p>
+                <ace-editor #cppeditor style="min-height:760px;"></ace-editor>
+        </div>
+
+</div>
