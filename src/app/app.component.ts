@@ -99,8 +99,10 @@ export class AppComponent implements AfterViewInit {
       maxLines: Infinity
  
     });
+    
+    require('../assets/ue4mode.js');
 
-    this.cppEditor.mode = 'c_cpp';
+    this.cppEditor.mode = 'c_ue4';
 
     this.cppEditor.registerOnChange(function(text){
       
