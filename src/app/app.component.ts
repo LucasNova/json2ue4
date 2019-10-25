@@ -24,8 +24,11 @@ class Field {
     if (!this.root){
       return this.name + (name ? name : '');
     }else{
-      return (this.root.getPrefixedName((name ? name : ''), false)) + (this.name ?  ( pluralized ? pluralize.singular(this.name) : this.name ) : '');
+      return (this.root.getPrefixedName((name ? name : ''), this.root.bArray && pluralized )) + (this.name ?  ( pluralized ? pluralize.singular(this.name) : this.name ) : '');
     }
+  }
+  getName(pluralized?:boolean){
+    return (pluralized ? pluralize.singular(this.name) : this.name);
   }
   setArray(_bArray:boolean){
     this.bArray = _bArray;
@@ -184,7 +187,7 @@ export class AppComponent implements AfterViewInit {
     var wrapper:string = 
 `
 USTRUCT(${this.optionsBlueprintable ? 'BlueprintType' : ''})
-struct F${ this.optionsPrefixes ? struct.getPrefixedName() : struct.name }
+struct F${ this.optionsPrefixes ? struct.getPrefixedName('', that.optionsPluralizable) : struct.getName(that.optionsPluralizable) }
 {
 
   GENERATED_BODY()
@@ -202,18 +205,18 @@ ${fieldsContent}
       if (field.bArray){
 return `
   UPROPERTY(${this.optionsBlueprintable ? 'Blueprintable' : ''})
-  TArray<F${this.optionsPrefixes ? field.getPrefixedName('', this.optionsPluralizable) : field.name}> ${field.name};
+  TArray<F${this.optionsPrefixes ? field.getPrefixedName('', this.optionsPluralizable) : field.getName(this.optionsPluralizable)}> ${field.getName()};
 `;
       }else{
 return `
   UPROPERTY(${this.optionsBlueprintable ? 'Blueprintable' : ''})
-  F${this.optionsPrefixes ? field.getPrefixedName() : field.name} ${field.name};
+  F${this.optionsPrefixes ? field.getPrefixedName('', this.optionsPluralizable) : field.getName(this.optionsPluralizable)} ${field.getName()};
 `;
       }
     }
 return `
   UPROPERTY(${this.optionsBlueprintable ? 'Blueprintable' : ''})
-  ${field.type} ${field.name};
+  ${field.type} ${field.getName()};
 `;
   }
 
@@ -235,7 +238,7 @@ return `
     if (field.root){
       var bDuplicated = false;
       this.fields.forEach((item)=>{
-        if ((item.root == field.root) && (item.name == field.name)){
+        if ((item.root == field.root) && (item.originalName == field.originalName)){
           bDuplicated = true;
         }
       });
