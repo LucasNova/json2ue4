@@ -17,7 +17,7 @@
                                         <mat-slide-toggle class="example-margin" color="primary"
                                                 [checked]="optionsPrefixes" (change)="onPrefixesToggle($event.checked)"
                                                 style="margin-top: 20px">
-                                                WithPrefixes
+                                                Prefixes {{optionsPrefixes ? 'ON' : 'OFF'}}
                                         </mat-slide-toggle>
                                         <p *ngIf="!optionsPrefixes" class="hint">Note: If your response have duplicated
                                                 key names, output generate duplicated structures. You need fix it by
@@ -28,7 +28,7 @@
                                                 [checked]="optionsSerializable"
                                                 (change)="onSerializableToggle($event.checked)"
                                                 style="margin-top: 20px">
-                                                With serialization
+                                                Serialization {{optionsSerializable ? 'ON' : 'OFF'}}
                                         </mat-slide-toggle>
                                         <p *ngIf="optionsSerializable" class="hint">Note: Currently not working, wait new version</p>
                                 </div>
@@ -37,7 +37,7 @@
                                                 [checked]="optionsBlueprintable"
                                                 (change)="onBlueprintableToggle($event.checked)"
                                                 style="margin-top: 20px">
-                                                Blueprintable
+                                                Blueprintable {{optionsBlueprintable ? 'ON' : 'OFF'}}
                                         </mat-slide-toggle>
                                 </div>
                                 <div class="row" style="height: 140px">
@@ -45,7 +45,7 @@
                                                 [checked]="optionsPluralizable"
                                                 (change)="onPluralizableToggle($event.checked)"
                                                 style="margin-top: 20px">
-                                                Singularization
+                                                Singular {{optionsPluralizable ? 'ON' : 'OFF'}}
                                         </mat-slide-toggle>
                                         <p *ngIf="optionsPluralizable" class="hint">Note: Will convert structure name to singular form, if that was created from array</p>
                                 </div>
