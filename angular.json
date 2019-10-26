@@ -35,8 +35,8 @@
           },
           "configurations": {
             "production": {
-              "baseHref": "/json2ue4/",
-              "deployUrl": "https://lucasnova.github.io/json2ue4/",
+              "baseHref": "/",
+              "deployUrl": "http://json2ue4.com/",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
