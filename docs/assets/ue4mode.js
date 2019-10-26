@@ -170,7 +170,7 @@ ace.define("ace/mode/doc_comment_highlight_rules",["require","exports","module",
                 },
                 {
                     token : "constant.numeric",
-                    regex: "(\<)?F.*( |>)"
+                    regex: "(\<)?F[A-Za-z0-9]*( |>)"
 
                 },
                 {
