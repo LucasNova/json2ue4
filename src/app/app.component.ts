@@ -35,6 +35,27 @@ class Field {
   }
 }
 
+class Parameter{
+  _name: string;
+  _type: string;
+  _bArray: boolean;
+
+  arg():string{
+    return '_'+this._name;
+  }
+  name():string{
+    return this._name;
+  }
+  type():string{
+    return this._type;
+  }
+  constructor(name:string, type: string, bArray?:boolean){
+    this._name = name;
+    this._type = type;
+    this._bArray = bArray;
+  }
+}
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -48,6 +69,7 @@ export class AppComponent implements AfterViewInit {
   optionsSerializable = true;
   optionsBlueprintable = true;
   optionsPluralizable = true;
+  optionsDefaultConstructor = true;
 
   fields: Array<Field> = [];
   className:string = '';
@@ -129,6 +151,12 @@ export class AppComponent implements AfterViewInit {
     this.handleData(this.jsonEditor.value);
   }
 
+  onDefaultConstructorToggle(val){
+    this.optionsDefaultConstructor = val;
+
+    this.handleData(this.jsonEditor.value);
+  }
+
   onBlueprintableToggle(val){
     this.optionsBlueprintable = val;
     this.handleData(this.jsonEditor.value);
@@ -176,6 +204,73 @@ export class AppComponent implements AfterViewInit {
     return text;
   }
 
+  getNameOfStruct(struct:Field):string{
+    if (this.optionsPrefixes){
+      return struct.getPrefixedName('', this.optionsPluralizable);
+    }else{
+      return struct.getName(this.optionsPluralizable);
+    }
+  }
+
+  generateDefaultConstructor(struct:Field): string{
+
+    var text = `
+  F${this.getNameOfStruct(struct)}();`
+
+    if (!this.optionsDefaultConstructor){
+      return text + `
+      `;
+    }
+
+    var args:string = '';
+    var assignment:string = ``;
+
+    this.getParameters(struct).forEach((param: Parameter)=>{
+      if (args.length > 0){
+        args += `, `
+      }
+      if (assignment.length > 0){
+        assignment += `
+    `;
+      }
+      var type:string = param.type();
+
+      if (param._bArray){
+        type = `TArray<${param.type()}>`;
+      }
+
+      args += `${type} ${param.arg()}`;
+      assignment += `${param.name()} = ${param.arg()};`;
+    });
+
+    
+
+    text += `
+
+  F${this.getNameOfStruct(struct)}( ${args} ){
+
+    ${assignment}
+  
+  }
+  `;
+
+    return text;
+  }
+
+  generateSerialization(struct:Field): string{
+    if (!this.optionsSerializable){
+      return '';
+    }
+    var text = 
+  `
+  F${this.getNameOfStruct(struct)}(){
+
+  }
+  `;
+
+    return text;
+  }
+
   generateWrapperForStruct(struct:Field, text: string):string{
 
     var fields = this.getFieldsWithStruct(struct);
@@ -193,9 +288,7 @@ struct F${ this.optionsPrefixes ? struct.getPrefixedName('', that.optionsPlurali
 {
 
   GENERATED_BODY()
-
-${fieldsContent}
-
+${fieldsContent}${this.generateDefaultConstructor(struct)}${this.generateSerialization(struct)}
 }
 `;
 
@@ -206,20 +299,36 @@ ${fieldsContent}
     if (field.type == 'struct'){
       if (field.bArray){
 return `
-  UPROPERTY(${this.optionsBlueprintable ? 'Blueprintable' : ''})
+  UPROPERTY(${this.optionsBlueprintable ? 'EditAnywhere, BlueprintReadWrite' : ''})
   TArray<F${this.optionsPrefixes ? field.getPrefixedName('', this.optionsPluralizable) : field.getName(this.optionsPluralizable)}> ${field.getName()};
 `;
       }else{
 return `
-  UPROPERTY(${this.optionsBlueprintable ? 'Blueprintable' : ''})
+  UPROPERTY(${this.optionsBlueprintable ? 'EditAnywhere, BlueprintReadWrite' : ''})
   F${this.optionsPrefixes ? field.getPrefixedName('', this.optionsPluralizable) : field.getName(this.optionsPluralizable)} ${field.getName()};
 `;
       }
     }
 return `
-  UPROPERTY(${this.optionsBlueprintable ? 'Blueprintable' : ''})
+  UPROPERTY(${this.optionsBlueprintable ? 'EditAnywhere, BlueprintReadWrite' : ''})
   ${field.type} ${field.getName()};
 `;
+  }
+
+  getParameters(struct:Field):Array<Parameter>{
+    var params:Array<Parameter> = [];
+
+    var fields:Array<Field> = this.getFieldsWithStruct(struct);
+
+    fields.forEach((field:Field)=>{
+      var type = field.type;
+      if (type == 'struct'){
+        type = `F${this.getNameOfStruct(field)}`;
+      }
+      params.push(new Parameter(field.getName(), type, field.bArray));
+    })
+
+    return params;
   }
 
   getFieldsWithStruct(struct:Field):Array<Field>{

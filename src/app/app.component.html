@@ -30,7 +30,7 @@
                                                 style="margin-top: 20px">
                                                 Serialization {{optionsSerializable ? 'ON' : 'OFF'}}
                                         </mat-slide-toggle>
-                                        <p *ngIf="optionsSerializable" class="hint">Note: Currently not working, wait new version</p>
+                                        <p *ngIf="optionsSerializable" class="hint">Note: Generate constuctor from json</p>
                                 </div>
                                 <div class="row" style="height: 140px">
                                         <mat-slide-toggle class="example-margin" color="primary"
@@ -48,6 +48,15 @@
                                                 Singular {{optionsPluralizable ? 'ON' : 'OFF'}}
                                         </mat-slide-toggle>
                                         <p *ngIf="optionsPluralizable" class="hint">Note: Will convert structure name to singular form, if that was created from array</p>
+                                </div>
+                                <div class="row" style="height: 140px">
+                                        <mat-slide-toggle class="example-margin" color="primary"
+                                                [checked]="optionsDefaultConstructor"
+                                                (change)="onDefaultConstructorToggle($event.checked)"
+                                                style="margin-top: 20px">
+                                                Constructor {{optionsDefaultConstructor ? 'ON' : 'OFF'}}
+                                        </mat-slide-toggle>
+                                        <p *ngIf="optionsDefaultConstructor" class="hint">Note: Generating constructor with paramaters</p>
                                 </div>
                         </div>
                 </div>
