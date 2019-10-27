@@ -93,8 +93,10 @@ export class AppComponent implements AfterViewInit {
     this.jsonEditor.mode = 'json';
 
     this.jsonEditor.registerOnChange(function(text){
+
+      //this.jsonEditor.setValue(JSON.stringify(text, null, '\t'));
+
       cmp.handleData(text);
-      
     })
 
     this.jsonEditor.value =
@@ -169,6 +171,7 @@ export class AppComponent implements AfterViewInit {
 
   handleData(data) {
 
+    
     if(!IsJsonString(data)){
       console.error('not valid JSON');
       this.cppEditor.value = 'NOT VALID JSON';
@@ -176,6 +179,8 @@ export class AppComponent implements AfterViewInit {
     }
 
     var obj = JSON.parse(data);
+
+    this.jsonEditor.value = JSON.stringify(obj, null, 2);
 
     this.fields = [];
     this.parse(obj);
