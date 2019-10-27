@@ -2,6 +2,7 @@ import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import { AceEditorComponent } from 'ng2-ace-editor';
 import { MatInputModule } from '@angular/material/input';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
 
 var pluralize = require('pluralize');
 
@@ -56,6 +57,7 @@ class Parameter{
   }
 }
 
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -63,6 +65,10 @@ class Parameter{
 })
 export class AppComponent implements AfterViewInit {
   
+  constructor(public dialog: MatDialog){
+
+  }
+
   title = 'json2ue';
   generateType = 'Struct';
   optionsPrefixes = true;
@@ -78,6 +84,14 @@ export class AppComponent implements AfterViewInit {
   
   @ViewChild('cppeditor', {static: false }) cppEditor : AceEditorComponent;
   
+  howToUseIt(){
+    window.open('https://youtu.be/riq_avp-YQw', "_blank");
+  }
+
+  openDialog() {
+    this.dialog.open(DialogDataExampleDialog);
+  }
+
   ngAfterViewInit() {
 
     let cmp = this;
@@ -505,6 +519,25 @@ struct ${className}
   getBodyParser():string{
     return 'BODY';
   }
+}
+
+@Component({
+  selector: 'dialog-data-example-dialog',
+  template: `<h1 mat-dialog-title>Donate information</h1>
+  <div mat-dialog-content>
+    By donating money to this service, you contribute to its further development.
+    <ul>
+      <li>
+        4003 0327 3986 6632<br>
+        MAXIM POGORELOV
+      </li>
+    </ul>
+    <p>Thank you, i hope my work is useful for you.</p>
+    <p>You can contact with me with email: pogorelowmax@gmail.com</p>
+  </div>`,
+})
+export class DialogDataExampleDialog {
+  constructor() {}
 }
 
 const capitalize = (s) => {

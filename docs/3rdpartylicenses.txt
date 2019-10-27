@@ -87,6 +87,8 @@ THE SOFTWARE.
 
 @angular/material/button
 
+@angular/material/dialog
+
 @angular/material/form-field
 
 @angular/material/slide-toggle
