@@ -24,7 +24,7 @@ class Field {
     if (!this.root){
       return this.name + (name ? name : '');
     }else{
-      return (this.root.getPrefixedName((name ? name : ''), this.root.bArray && pluralized )) + (this.name ?  ( pluralized ? pluralize.singular(this.name) : this.name ) : '');
+      return (this.root.getPrefixedName((name ? name : ''), this.root.bArray && pluralized )) + (this.name ?  ( pluralized ? pluralize.singular(capitalize(this.name)) : capitalize(this.name) ) : '');
     }
   }
   getName(pluralized?:boolean){
@@ -215,7 +215,7 @@ export class AppComponent implements AfterViewInit {
   generateDefaultConstructor(struct:Field): string{
 
     var text = `
-  F${this.getNameOfStruct(struct)}();`
+  F${capitalize(this.getNameOfStruct(struct))}() {};`
 
     if (!this.optionsDefaultConstructor){
       return text + `
@@ -247,7 +247,7 @@ export class AppComponent implements AfterViewInit {
 
     text += `
 
-  F${this.getNameOfStruct(struct)}( ${args} ){
+  F${capitalize(this.getNameOfStruct(struct))}( ${args} ){
 
     ${assignment}
   
@@ -261,10 +261,34 @@ export class AppComponent implements AfterViewInit {
     if (!this.optionsSerializable){
       return '';
     }
+
+    var assignment = '';
+    this.getParameters(struct).forEach((param: Parameter)=>{
+
+      if (assignment.length > 0){
+        assignment += `
+    `;
+      }
+
+      assignment += `${param.name()} = _tmp${this.getNameOfStruct(struct)}.${param.name()};`;
+    });
+
     var text = 
   `
-  F${this.getNameOfStruct(struct)}(){
+  /* Don't Forget to setup your project
+  Add #include "Runtime/JsonUtilities/Public/JsonObjectConverter.h" in 
+  file with this structs.
+  Also you need add "Json", "JsonUtilities" in Build.cs */
 
+  F${capitalize(this.getNameOfStruct(struct))}(FString _json_){
+    F${capitalize(this.getNameOfStruct(struct))} _tmp${this.getNameOfStruct(struct)};
+    
+		FJsonObjectConverter::JsonObjectStringToUStruct<F${capitalize(this.getNameOfStruct(struct))}>(
+		_json_,
+		&_tmp${this.getNameOfStruct(struct)},
+    0, 0);
+    
+    ${assignment}
   }
   `;
 
@@ -284,12 +308,12 @@ export class AppComponent implements AfterViewInit {
     var wrapper:string = 
 `
 USTRUCT(${this.optionsBlueprintable ? 'BlueprintType' : ''})
-struct F${ this.optionsPrefixes ? struct.getPrefixedName('', that.optionsPluralizable) : struct.getName(that.optionsPluralizable) }
+struct F${ this.optionsPrefixes ? struct.getPrefixedName('', that.optionsPluralizable) : capitalize(struct.getName(that.optionsPluralizable)) }
 {
 
   GENERATED_BODY()
-${fieldsContent}${this.generateDefaultConstructor(struct)}${this.generateSerialization(struct)}
-}
+${fieldsContent}${this.generateDefaultConstructor(struct)}${!struct.root ? this.generateSerialization(struct) : ''}
+};
 `;
 
     return wrapper + text;
@@ -300,12 +324,12 @@ ${fieldsContent}${this.generateDefaultConstructor(struct)}${this.generateSeriali
       if (field.bArray){
 return `
   UPROPERTY(${this.optionsBlueprintable ? 'EditAnywhere, BlueprintReadWrite' : ''})
-  TArray<F${this.optionsPrefixes ? field.getPrefixedName('', this.optionsPluralizable) : field.getName(this.optionsPluralizable)}> ${field.getName()};
+  TArray<F${this.optionsPrefixes ? field.getPrefixedName('', this.optionsPluralizable) : capitalize(field.getName(this.optionsPluralizable))}> ${field.getName()};
 `;
       }else{
 return `
   UPROPERTY(${this.optionsBlueprintable ? 'EditAnywhere, BlueprintReadWrite' : ''})
-  F${this.optionsPrefixes ? field.getPrefixedName('', this.optionsPluralizable) : field.getName(this.optionsPluralizable)} ${field.getName()};
+  F${this.optionsPrefixes ? field.getPrefixedName('', this.optionsPluralizable) : capitalize(field.getName(this.optionsPluralizable))} ${field.getName()};
 `;
       }
     }
@@ -369,7 +393,7 @@ return `
       if (!name && !struct){
         newField = new Field('struct', `${this.className ? capitalize(this.className) : `My${this.generateType}`}`, null);
       }else{
-        newField = new Field('struct', ''+capitalize(name), struct, bArray);
+        newField = new Field('struct', ''+name, struct, bArray);
       }
       
       this.pushUnique(newField);
@@ -383,7 +407,7 @@ return `
           var cmp = this;
 
           value.forEach(function(item){
-            cmp.parse(item, capitalize(key), newField, true);
+            cmp.parse(item, key, newField, true);
           })
 
         } else {
@@ -421,7 +445,7 @@ return `
         }
     
 
-    var newField = new Field(type, capitalize(name), struct);
+    var newField = new Field(type, name, struct);
     this.fields.push(newField);
 
     //return text;

@@ -30,7 +30,7 @@
                                                 style="margin-top: 20px">
                                                 Serialization {{optionsSerializable ? 'ON' : 'OFF'}}
                                         </mat-slide-toggle>
-                                        <p *ngIf="optionsSerializable" class="hint">Note: Generate constuctor from json</p>
+                                        <p *ngIf="optionsSerializable" class="hint">Note: Generate constuctor from json string</p>
                                 </div>
                                 <div class="row" style="height: 140px">
                                         <mat-slide-toggle class="example-margin" color="primary"
@@ -56,8 +56,12 @@
                                                 style="margin-top: 20px">
                                                 Constructor {{optionsDefaultConstructor ? 'ON' : 'OFF'}}
                                         </mat-slide-toggle>
-                                        <p *ngIf="optionsDefaultConstructor" class="hint">Note: Generating constructor with paramaters</p>
+                                        <p *ngIf="optionsDefaultConstructor" class="hint">Note: Add additinal constructor with paramaters</p>
                                 </div>
+                        </div>
+                        <div class="table" style="text-align: right;">
+                                <button mat-raised-button color="primary">How use it?</button>
+                                <button mat-raised-button color="warn">Donate</button>
                         </div>
                 </div>
                 <p>Put your JSON response here:</p>
