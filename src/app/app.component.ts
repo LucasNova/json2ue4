@@ -71,11 +71,14 @@ export class AppComponent implements AfterViewInit {
 
   title = 'json2ue';
   generateType = 'Struct';
+
   optionsPrefixes = true;
   optionsSerializable = true;
   optionsBlueprintable = true;
   optionsPluralizable = true;
   optionsDefaultConstructor = true;
+
+  jsonValue:string = '';
 
   fields: Array<Field> = [];
   className:string = '';
@@ -98,13 +101,12 @@ export class AppComponent implements AfterViewInit {
     this.jsonEditor.getEditor().setOptions({
       showLineNumbers: false,
       tabSize: 2,
-      enableBasicAutocompletion: true,
-      enableSnippets: true,
-      enableLiveAutocompletion: true,
-      maxLines: Infinity
+      maxLines: Infinity,
+      autoUpdateContent: true
     });
 
     this.jsonEditor.mode = 'json';
+
 
     this.jsonEditor.registerOnChange(function(text){
 
@@ -184,7 +186,6 @@ export class AppComponent implements AfterViewInit {
   }
 
   handleData(data) {
-
     
     if(!IsJsonString(data)){
       console.error('not valid JSON');
@@ -194,8 +195,11 @@ export class AppComponent implements AfterViewInit {
 
     var obj = JSON.parse(data);
 
-    this.jsonEditor.value = JSON.stringify(obj, null, 2);
+    if(Math.abs(data.length - this.jsonValue.length) > 4){
+      this.jsonEditor.value = JSON.stringify(obj, null, 2);
+    }
 
+    this.jsonValue = data;
     this.fields = [];
     this.parse(obj);
     
@@ -451,7 +455,12 @@ return `
     } else
       if (typeof field === 'number') {
         if (field % 1 === 0) {
-          type = "int32";
+          if (Math.abs(field) >= 2147483648){
+            type = "int64";
+          }else{
+            type = "int32";
+          }
+          
         } else {
           type = "float";
         }

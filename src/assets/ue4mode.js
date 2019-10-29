@@ -65,7 +65,7 @@ ace.define("ace/mode/doc_comment_highlight_rules",["require","exports","module",
         
         var storageType = (
             "asm|__asm__|auto|bool|_Bool|char|_Complex|double|enum|float|" +
-            "_Imaginary|int32|FString|long|short|signed|struct|typedef|union|unsigned|void|" +
+            "_Imaginary|int32|int64|FString|long|short|signed|struct|typedef|union|unsigned|void|" +
             "class|wchar_t|template|char16_t|char32_t"
         );
     
