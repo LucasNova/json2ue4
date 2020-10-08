@@ -21,6 +21,9 @@ jobs:
       with:
         # Version Spec of the version to use.  Examples: 12.x, 10.15.1, >=10.15.0
         node-version: 12.x
+    - name: Checkout
+      uses: actions/checkout@v2
+
     # Runs a single command using the runners shell
     - name: nodejs install dependencies
       run: npm i
