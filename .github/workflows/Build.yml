@@ -34,7 +34,7 @@ jobs:
       run: npm i
     
     - name: Rebuild
-      run: ng build
+      run: ng build --prod
     
     - name: Commit files
       run: |
