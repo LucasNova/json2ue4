@@ -534,15 +534,7 @@ struct ${className}
   selector: 'dialog-data-example-dialog',
   template: `<h1 mat-dialog-title>Donate information</h1>
   <div mat-dialog-content>
-    By donating money to this service, you contribute to its further development.
-    <ul>
-      <li>
-        4003 0327 3986 6632<br>
-        MAXIM POGORELOV
-      </li>
-    </ul>
-    <p>Thank you, i hope my work is useful for you.</p>
-    <p>You can contact with me with email: pogorelowmax@gmail.com</p>
+    <p>Contact email: pogorelowmax@gmail.com</p>
   </div>`,
 })
 export class DialogDataExampleDialog {
