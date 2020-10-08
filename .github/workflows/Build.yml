@@ -24,7 +24,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    # Runs a single command using the runners shell
+    - name: AngularCli
+      run: npm install -g @angular/cli
+    
     - name: nodejs install dependencies
       run: npm i
     
