@@ -532,7 +532,7 @@ struct ${className}
 
 @Component({
   selector: 'dialog-data-example-dialog',
-  template: `<h1 mat-dialog-title>Donate information</h1>
+  template: `<h1 mat-dialog-title>Contact</h1>
   <div mat-dialog-content>
     <p>Contact email: pogorelowmax@gmail.com</p>
   </div>`,
