@@ -37,7 +37,7 @@
           "configurations": {
             "production": {
               "baseHref": "/",
-              "deployUrl": "https://json2ue4.com/",
+              "deployUrl": "https://json2ue.com/",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
