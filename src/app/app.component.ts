@@ -118,18 +118,24 @@ export class AppComponent implements AfterViewInit {
     this.jsonEditor.value =
 `
 {
-  "users": [{
-    "name": "John",
-    "car" : {
-      "name": "Skoda",
-      "model": "Octavia",
-      "cost": 12000
-    },
-    "points": 35.42,
-    "deleted": false
-  }]
+  "users": [
+    {
+      "name": "John",
+      "car": {
+        "name": "Skoda",
+        "model": "Octavia",
+        "cost": 12000
+      },
+      "friends": [
+        "Michael",
+        "Rose",
+        "Nikita"
+      ],
+      "points": 35.42,
+      "deleted": false
+    }
+  ]
 }
-
 `
 
     this.cppEditor.getEditor().setOptions({
@@ -184,9 +190,31 @@ export class AppComponent implements AfterViewInit {
     this.optionsPluralizable = val;
     this.handleData(this.jsonEditor.value);
   }
+  lastData = null;
 
-  handleData(data) {
-    
+  copyToClipboard = str => {
+    const el = document.createElement('textarea');
+    el.value = str;
+    el.setAttribute('readonly', '');
+    el.style.position = 'absolute';
+    el.style.left = '-9999px';
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+  };
+
+  async handleData(data) {
+    // do nothing when data equal with last data
+    if (this.lastData == data){
+      return;
+    }
+
+    if (data.length > 10000000){
+      console.error('too long input');
+      this.cppEditor.value = 'Too long input, try to past smaller part of response';
+      return false;
+    }
     if(!IsJsonString(data)){
       console.error('not valid JSON');
       this.cppEditor.value = 'NOT VALID JSON';
@@ -202,10 +230,13 @@ export class AppComponent implements AfterViewInit {
     this.jsonValue = data;
     this.fields = [];
     this.parse(obj);
-    
-    this.cppEditor.value = this.generateCPPValue();
-    //this.cppEditor.value = ''; //this.parse(obj);
-    //console.log('fields:', this.fields);
+    var cppValue = this.generateCPPValue();
+    if (data.length > 10000){
+      this.copyToClipboard(cppValue);
+      this.cppEditor.value = cppValue.substring(0, 10000);
+    }else{
+      this.cppEditor.value = cppValue;
+    }
   }
 
   generateCPPValue():string{
@@ -356,10 +387,18 @@ return `
 `;
       }
     }
+    if(field.bArray){
+return `
+  UPROPERTY(${this.optionsBlueprintable ? 'EditAnywhere, BlueprintReadWrite' : ''})
+  TArray<F${this.optionsPrefixes ? field.getPrefixedName('', this.optionsPluralizable) : capitalize(field.getName(this.optionsPluralizable))}> ${field.getName()};
+`;
+    }else{
 return `
   UPROPERTY(${this.optionsBlueprintable ? 'EditAnywhere, BlueprintReadWrite' : ''})
   ${field.type} ${field.getName()};
 `;
+    }
+
   }
 
   getParameters(struct:Field):Array<Parameter>{
@@ -373,7 +412,7 @@ return `
         type = `F${this.getNameOfStruct(field)}`;
       }
       params.push(new Parameter(field.getName(), type, field.bArray));
-    })
+    });
 
     return params;
   }
@@ -429,27 +468,23 @@ return `
 
           var cmp = this;
 
-          value.forEach(function(item){
-            cmp.parse(item, key, newField, true);
-          })
+          cmp.parse(value[0], key, newField, true);
 
         } else {
           this.parse(value, key, newField);
         }
       }
 
-
       //text = this.generateStructWrapper(text, name);
     } else {
-      this.parseOneField(val, name, struct);
+      this.parseOneField(val, name, struct, bArray);
     }
 
   }
 
-  parseOneField(field: any, name?: string, struct?: Field){
+  parseOneField(field: any, name?: string, struct?: Field, bArray?:boolean){
     var text: string = "";
     var type: string = "";
-
     if (typeof field === 'string') {
       type = "FString";
     } else
@@ -465,15 +500,14 @@ return `
           type = "float";
         }
       } else
-        if (typeof field === 'boolean') {
-          type = "bool"
-        } else {
-          console.error('NOT UNDESTANDABLE TYPE!');
-          return "";
-        }
+      if (typeof field === 'boolean') {
+        type = "bool"
+      } else {
+        console.error('NOT UNDESTANDABLE TYPE!');
+        return "";
+      }
     
-
-    var newField = new Field(type, name, struct);
+    var newField = new Field(type, name, struct, bArray);
     this.fields.push(newField);
 
     //return text;
