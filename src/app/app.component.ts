@@ -77,6 +77,7 @@ export class AppComponent implements AfterViewInit {
   optionsBlueprintable = true;
   optionsPluralizable = true;
   optionsDefaultConstructor = true;
+  optionsMakeCategories = true;
 
   jsonValue:string = '';
 
@@ -177,6 +178,12 @@ export class AppComponent implements AfterViewInit {
 
   onDefaultConstructorToggle(val){
     this.optionsDefaultConstructor = val;
+
+    this.handleData(this.jsonEditor.value);
+  }
+
+  onMakeCategoriesToggle(val){
+    this.optionsMakeCategories = val;
 
     this.handleData(this.jsonEditor.value);
   }
@@ -374,27 +381,29 @@ ${fieldsContent}${this.generateDefaultConstructor(struct)}${!struct.root ? this.
   }
 
   generateWrapperForField(field:Field):string{
+
+    var categoryPropertyString = this.optionsMakeCategories ? `Category="JSON|${this.getRootClassName()}${field.root.getName(true) != this.getRootClassName() ? '|' + field.root.getName(true) : ''}", ` : '';
     if (field.type == 'struct'){
       if (field.bArray){
 return `
-  UPROPERTY(${this.optionsBlueprintable ? 'EditAnywhere, BlueprintReadWrite' : ''})
+  UPROPERTY(${categoryPropertyString}${this.optionsBlueprintable ? 'EditAnywhere, BlueprintReadWrite' : ''})
   TArray<F${this.optionsPrefixes ? field.getPrefixedName('', this.optionsPluralizable) : capitalize(field.getName(this.optionsPluralizable))}> ${field.getName()};
 `;
       }else{
 return `
-  UPROPERTY(${this.optionsBlueprintable ? 'EditAnywhere, BlueprintReadWrite' : ''})
+  UPROPERTY(${categoryPropertyString}${this.optionsBlueprintable ? 'EditAnywhere, BlueprintReadWrite' : ''})
   F${this.optionsPrefixes ? field.getPrefixedName('', this.optionsPluralizable) : capitalize(field.getName(this.optionsPluralizable))} ${field.getName()};
 `;
       }
     }
     if(field.bArray){
 return `
-  UPROPERTY(${this.optionsBlueprintable ? 'EditAnywhere, BlueprintReadWrite' : ''})
+  UPROPERTY(${categoryPropertyString}${this.optionsBlueprintable ? 'EditAnywhere, BlueprintReadWrite' : ''})
   TArray<F${this.optionsPrefixes ? field.getPrefixedName('', this.optionsPluralizable) : capitalize(field.getName(this.optionsPluralizable))}> ${field.getName()};
 `;
     }else{
 return `
-  UPROPERTY(${this.optionsBlueprintable ? 'EditAnywhere, BlueprintReadWrite' : ''})
+  UPROPERTY(${categoryPropertyString}${this.optionsBlueprintable ? 'EditAnywhere, BlueprintReadWrite' : ''})
   ${field.type} ${field.getName()};
 `;
     }
@@ -511,6 +520,10 @@ return `
     this.fields.push(newField);
 
     //return text;
+  }
+
+  getRootClassName():string{
+    return `${this.className ? capitalize(this.className) : `My${this.generateType}`}`;
   }
 
   generateStructWrapper(body: string, fieldname?: string): string {

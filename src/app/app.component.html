@@ -58,6 +58,15 @@
                                         </mat-slide-toggle>
                                         <p *ngIf="optionsDefaultConstructor" class="hint">Note: Add additinal constructor with paramaters</p>
                                 </div>
+                                <div class="row" style="height: 140px">
+                                        <mat-slide-toggle class="example-margin" color="primary"
+                                                [checked]="optionsMakeCategories"
+                                                (change)="onMakeCategoriesToggle($event.checked)"
+                                                style="margin-top: 20px">
+                                                Categories {{optionsMakeCategories ? 'ON' : 'OFF'}}
+                                        </mat-slide-toggle>
+                                        <p *ngIf="optionsDefaultConstructor" class="hint">Note: Add Categories to UPROPERTY fields</p>
+                                </div>
                         </div>
                         <div class="table" style="text-align: right;">
                                 <button mat-raised-button color="primary" (click)="howToUseIt()">How to use it?</button>
